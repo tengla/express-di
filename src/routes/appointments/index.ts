@@ -19,19 +19,32 @@ router.use((req, res, next) => {
   next();
 });
 
+const servicemap = new Map([
+  ["gyn", "cortex"],
+  ["gp", "legacy"],
+  ["none", "fallback"],
+]);
+
 router.use("/:service_id", (req, res, next) => {
   const { service_id } = req.params;
-  if (["gyn"].includes(service_id)) {
-    req.container.register({
-      appointmentService: asClass(CortexAppointmentService),
-      context: asValue("cortex"),
-    });
-  }
-  if (["none"].includes(service_id)) {
-    req.container.register({
-      appointmentService: asClass(FallbackAppointmentService),
-      context: asValue("fallback"),
-    });
+  const ctx = servicemap.get(service_id);
+  switch(ctx) {
+    case "cortex": {
+      req.container.register({
+        appointmentService: asClass(CortexAppointmentService),
+      });
+      break;
+    }
+    case "legacy": {
+      break;
+    }
+    case "fallback":
+    default: {
+      req.container.register({
+        appointmentService: asClass(FallbackAppointmentService),
+      });
+      break;
+    }
   }
   next();
 });

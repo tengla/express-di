@@ -20,6 +20,7 @@ export class AppointmentAPI {
     req: Request<{ service_id: string }>,
     res: Response
   ) {
+    console.log('authorization', req.headers['authorization']);
     console.log('Current user: %o', this.currentUser);
     console.log('Current context is: %s', this.context);
     const { service_id } = req.params;

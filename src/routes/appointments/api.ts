@@ -2,13 +2,13 @@
 import { type Request, type Response } from "express";
 import type { AppointmentService } from "@/types/appointment-service";
 
-type Ctor = {
+type AppointmentAPICtor = {
   appointmentService: AppointmentService;
 };
 
 export class AppointmentAPI {
   private appointmentService: AppointmentService;
-  constructor({ appointmentService }: Ctor) {
+  constructor({ appointmentService }: AppointmentAPICtor) {
     this.appointmentService = appointmentService;
   }
   public async getAppointments(

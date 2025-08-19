@@ -1,11 +1,9 @@
 import express from "express";
-import {
-  asClass,
-  createContainer,
-} from "awilix";
+import { asClass, createContainer } from "awilix";
 import { scopePerRequest } from "awilix-express";
 import { LegacyAppointmentService } from "./services/legacy";
 import { CortexAppointmentService } from "./services/cortex";
+import { FallbackAppointmentService } from "./services/fallback";
 import { AppointmentAPI } from "./api";
 
 const container = createContainer();
@@ -23,6 +21,11 @@ router.use("/:service_id", (req, res, next) => {
   if (["gyn"].includes(service_id)) {
     req.container.register({
       appointmentService: asClass(CortexAppointmentService),
+    });
+  }
+  if (["na"].includes(service_id)) {
+    req.container.register({
+      appointmentService: asClass(FallbackAppointmentService),
     });
   }
   next();

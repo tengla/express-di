@@ -3,7 +3,7 @@ import { asClass, asValue } from "awilix";
 import { scopePerRequest } from "awilix-express";
 import { CortexAppointmentService } from "./services/cortex";
 import { FallbackAppointmentService } from "./services/fallback";
-import { AppointmentAPI } from "./api";
+import { AppointmentAPI, type ContextAlias } from "./api";
 import container from "./container";
 
 const router = express.Router();
@@ -19,7 +19,7 @@ router.use((req, res, next) => {
   next();
 });
 
-const servicemap = new Map([
+const servicemap = new Map<string, ContextAlias>([
   ["gyn", "cortex"],
   ["gp", "legacy"],
   ["none", "fallback"],
@@ -32,6 +32,7 @@ router.use("/:service_id", (req, res, next) => {
     case "cortex": {
       req.container.register({
         appointmentService: asClass(CortexAppointmentService),
+        context: asValue("cortex"),
       });
       break;
     }
@@ -42,6 +43,7 @@ router.use("/:service_id", (req, res, next) => {
     default: {
       req.container.register({
         appointmentService: asClass(FallbackAppointmentService),
+        context: asValue("fallback"),
       });
       break;
     }

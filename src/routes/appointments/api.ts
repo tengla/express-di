@@ -1,7 +1,7 @@
 import { type Request, type Response } from "express";
 import type { AppointmentService } from "@/types/appointment-service";
 
-type ContextAlias = "legacy" | "cortex" | "fallback";
+export type ContextAlias = "legacy" | "cortex" | "fallback";
 type AppointmentAPICtor = {
   appointmentService: AppointmentService;
   currentUser?: { id: string };

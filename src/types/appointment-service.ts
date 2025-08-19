@@ -1,4 +1,8 @@
 
+type Appointment = {
+  id: string;
+}
+
 export interface AppointmentService {
-  getAppointments(serviceId: string): Array<{ id: string }>;
+  getAppointments(serviceId: string): Promise<Array<Appointment>>;
 }

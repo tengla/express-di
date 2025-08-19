@@ -1,5 +1,5 @@
 import express from "express";
-import { asClass, createContainer } from "awilix";
+import { asClass, asValue, createContainer } from "awilix";
 import { scopePerRequest } from "awilix-express";
 import { LegacyAppointmentService } from "./services/legacy";
 import { CortexAppointmentService } from "./services/cortex";
@@ -10,14 +10,25 @@ const container = createContainer();
 
 container.register({
   appointmentService: asClass(LegacyAppointmentService),
+  currentUser: asValue(null),
 });
 
 const router = express.Router();
 router.use(scopePerRequest(container));
 
+router.use((req, res, next) => {
+  if (!req.user.id) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+  req.container = container.createScope();
+  req.container.register({
+    currentUser: asValue(req.user),
+  });
+  next();
+});
+
 router.use("/:service_id", (req, res, next) => {
   const { service_id } = req.params;
-  req.container = container.createScope();
   if (["gyn"].includes(service_id)) {
     req.container.register({
       appointmentService: asClass(CortexAppointmentService),

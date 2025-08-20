@@ -1,8 +1,6 @@
 
-type Appointment = {
-  id: string;
-}
+import type { Appointment } from "@/schema/appointment";
 
 export interface AppointmentService {
-  getAppointments(serviceId: string): Promise<Array<Appointment>>;
+  getAppointments(serviceId: string): Promise<Appointment[]>;
 }
